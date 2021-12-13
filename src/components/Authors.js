@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import { ALL_AUTHORS } from '../queries';
+import EditAuthor from './EditAuthor';
 
 const Authors = (props) => {
   const [authors, setAuthors] = useState([]);
@@ -43,6 +44,10 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <div>
+        <h2>Set birthyear</h2>
+        <EditAuthor notify={props.notify} />
+      </div>
     </div>
   );
 };
