@@ -46,7 +46,7 @@ const Authors = (props) => {
       </table>
       <div>
         <h2>Set birthyear</h2>
-        <EditAuthor notify={props.notify} />
+        <EditAuthor authors={authors} notify={props.notify} />
       </div>
     </div>
   );
