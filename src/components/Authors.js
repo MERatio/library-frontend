@@ -44,10 +44,12 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <div>
-        <h2>Set birthyear</h2>
-        <EditAuthor authors={authors} notify={props.notify} />
-      </div>
+      {props.token && (
+        <div>
+          <h2>Set birthyear</h2>
+          <EditAuthor authors={authors} notify={props.notify} />
+        </div>
+      )}
     </div>
   );
 };

@@ -10,9 +10,22 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([]);
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }],
     onError: (error) => {
       props.notify(error.networkError.result.errors[0].message);
+    },
+    update: (store, response) => {
+      const dataInStore = store.readQuery({ query: ALL_BOOKS });
+      // dataInStore is null if user did not visit the books view
+      // therefore useLazyQuery will not be executed
+      if (dataInStore) {
+        store.writeQuery({
+          query: ALL_BOOKS,
+          data: {
+            ...dataInStore,
+            allBooks: [...dataInStore.allBooks, response.data.addBook],
+          },
+        });
+      }
     },
   });
 
