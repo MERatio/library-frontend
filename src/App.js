@@ -23,6 +23,10 @@ const App = () => {
     setToken(null);
     localStorage.removeItem('library-user-token');
     client.resetStore();
+    const authRequiredPages = ['add'];
+    if (authRequiredPages.includes(page)) {
+      setPage('authors');
+    }
   };
 
   return (
