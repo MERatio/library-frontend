@@ -8,7 +8,10 @@ const LoginForm = (props) => {
 
 	const [login, result] = useMutation(LOGIN, {
 		onError: (error) => {
-			props.notify(error.graphQLErrors[0].message);
+			const errorMessage = error.graphQLErrors[0]
+				? error.graphQLErrors[0].message
+				: error.networkError.result.errors[0].message;
+			props.notify(errorMessage);
 		},
 	});
 

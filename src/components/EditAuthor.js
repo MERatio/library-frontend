@@ -10,7 +10,10 @@ const EditAuthor = (props) => {
 	const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
 		refetchQueries: [{ query: ALL_AUTHORS }],
 		onError: (error) => {
-			props.notify(error.networkError.result.errors[0].message);
+			const errorMessage = error.graphQLErrors[0]
+				? error.graphQLErrors[0].message
+				: error.networkError.result.errors[0].message;
+			props.notify(errorMessage);
 		},
 	});
 

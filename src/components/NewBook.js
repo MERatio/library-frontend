@@ -11,7 +11,10 @@ const NewBook = (props) => {
 
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
-      props.notify(error.networkError.result.errors[0].message);
+      const errorMessage = error.graphQLErrors[0]
+        ? error.graphQLErrors[0].message
+        : error.networkError.result.errors[0].message;
+      props.notify(errorMessage);
     },
     update: (store, response) => {
       const dataInStore = store.readQuery({ query: ALL_BOOKS });
