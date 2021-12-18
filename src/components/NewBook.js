@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { ALL_BOOKS, CREATE_BOOK } from '../queries';
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
@@ -17,15 +17,26 @@ const NewBook = (props) => {
       props.notify(errorMessage);
     },
     update: (store, response) => {
-      const dataInStore = store.readQuery({ query: ALL_BOOKS });
-      // dataInStore is null if user did not visit the books view
+      const booksDataInStore = store.readQuery({ query: ALL_BOOKS });
+      // booksDataInStore is null if user did not visit the books view
       // therefore useLazyQuery will not be executed
-      if (dataInStore) {
+      if (booksDataInStore) {
         store.writeQuery({
           query: ALL_BOOKS,
           data: {
-            ...dataInStore,
-            allBooks: [...dataInStore.allBooks, response.data.addBook],
+            ...booksDataInStore,
+            allBooks: [...booksDataInStore.allBooks, response.data.addBook],
+          },
+        });
+        const authorsDataInStore = store.readQuery({ query: ALL_AUTHORS });
+        store.writeQuery({
+          query: ALL_AUTHORS,
+          data: {
+            ...authorsDataInStore,
+            allAuthors: [
+              ...authorsDataInStore.allAuthors,
+              response.data.addBook.author,
+            ],
           },
         });
       }
