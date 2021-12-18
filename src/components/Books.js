@@ -3,12 +3,6 @@ import React, { useState } from 'react';
 const Books = (props) => {
   const [genre, setGenre] = useState(null);
 
-  if (!props.show) {
-    return null;
-  } else if (props.loading) {
-    return <div>loading...</div>;
-  }
-
   const getGenres = (books) => {
     let genres = [];
     books.forEach((book) => {
@@ -22,6 +16,10 @@ const Books = (props) => {
   const booksToRender = genre
     ? props.books.filter((book) => book.genres.includes(genre))
     : props.books;
+
+  if (props.loading) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div>

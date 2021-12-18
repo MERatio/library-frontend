@@ -29,10 +29,6 @@ const LoginForm = (props) => {
 		login({ variables: { username, password } });
 	};
 
-	if (!props.show) {
-		return null;
-	}
-
 	return (
 		<div>
 			<form onSubmit={onSubmit}>

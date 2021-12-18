@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { ALL_AUTHORS } from '../queries';
 import EditAuthor from './EditAuthor';
 
 const Authors = (props) => {
   const [authors, setAuthors] = useState([]);
-  const [getAuthors, allAuthorsResult] = useLazyQuery(ALL_AUTHORS);
-
-  useEffect(() => {
-    if (props.show) {
-      getAuthors();
-    }
-  }, [props.show, getAuthors]);
+  const allAuthorsResult = useQuery(ALL_AUTHORS);
 
   useEffect(() => {
     if (allAuthorsResult.data) {
       setAuthors(allAuthorsResult.data.allAuthors);
     }
-  }, [allAuthorsResult.data]);
+  }, [allAuthorsResult]);
 
-  if (!props.show) {
-    return null;
-  } else if (allAuthorsResult.loading) {
+  if (allAuthorsResult.loading) {
     return <div>loading...</div>;
   }
 
@@ -44,7 +36,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      {props.token && (
+      {props.currentUser && (
         <div>
           <h2>Set birthyear</h2>
           <EditAuthor authors={authors} notify={props.notify} />

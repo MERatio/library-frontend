@@ -1,14 +1,13 @@
 import React from 'react';
 
 const Recommend = (props) => {
-	if (!props.show) {
-		return null;
-	} else if (props.loading) {
-		return <div>loading...</div>;
-	}
 	const booksToRender = props.books.filter((book) =>
 		book.genres.includes(props.favoriteGenre)
 	);
+
+	if (props.loading) {
+		return <div>loading...</div>;
+	}
 
 	return (
 		<div>

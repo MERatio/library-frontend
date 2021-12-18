@@ -72,40 +72,50 @@ const App = () => {
     return <div>loading...</div>;
   }
 
+  const getCurrentView = (page) => {
+    switch (page) {
+      case 'books':
+        return <Books loading={allBooksResult.loading} books={books} />;
+      case 'add':
+        return <NewBook notify={notify} />;
+      case 'recommend':
+        return (
+          <Recommend
+            loading={allBooksResult.loading}
+            books={books}
+            favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
+          />
+        );
+      case 'login':
+        return (
+          <LoginForm notify={notify} setToken={setToken} setPage={setPage} />
+        );
+      case 'authors':
+      default:
+        return <Authors notify={notify} currentUser={currentUser} />;
+    }
+  };
+
+  let currentView = getCurrentView(page);
+
   return (
     <div>
       <Notify errorMessage={errorMessage} />
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
-        {token && <button onClick={() => setPage('add')}>add book</button>}
-        {token && (
+        {currentUser && (
+          <button onClick={() => setPage('add')}>add book</button>
+        )}
+        {currentUser && (
           <button onClick={() => setPage('recommend')}>recommend</button>
         )}
-        {!token && <button onClick={() => setPage('login')}>login</button>}
-        {token && <button onClick={handleLogoutBtnClick}>logout</button>}
+        {!currentUser && (
+          <button onClick={() => setPage('login')}>login</button>
+        )}
+        {currentUser && <button onClick={handleLogoutBtnClick}>logout</button>}
       </div>
-      <Authors show={page === 'authors'} notify={notify} token={token} />
-      <Books
-        show={page === 'books'}
-        loading={allBooksResult.loading}
-        books={books}
-      />
-      <NewBook show={page === 'add'} notify={notify} />
-      <Recommend
-        show={page === 'recommend'}
-        loading={allBooksResult.loading}
-        books={books}
-        favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
-      />
-      {!token && (
-        <LoginForm
-          show={page === 'login'}
-          notify={notify}
-          setToken={setToken}
-          setPage={setPage}
-        />
-      )}
+      {currentView}
     </div>
   );
 };
