@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries';
+import React, { useState } from 'react';
 
 const Books = (props) => {
-  const [books, setBooks] = useState([]);
   const [genre, setGenre] = useState(null);
-  const [getBooks, allBooksResult] = useLazyQuery(ALL_BOOKS);
-
-  useEffect(() => {
-    if (props.show) {
-      getBooks();
-    }
-  }, [props.show, getBooks]);
-
-  useEffect(() => {
-    if (allBooksResult.data) {
-      setBooks(allBooksResult.data.allBooks);
-    }
-  }, [allBooksResult.data]);
 
   if (!props.show) {
     return null;
-  } else if (allBooksResult.loading) {
+  } else if (props.loading) {
     return <div>loading...</div>;
   }
 
@@ -33,11 +17,11 @@ const Books = (props) => {
     return [...new Set(genres)];
   };
 
-  const genres = getGenres(books);
+  const genres = getGenres(props.books);
 
   const booksToRender = genre
-    ? books.filter((book) => book.genres.includes(genre))
-    : books;
+    ? props.books.filter((book) => book.genres.includes(genre))
+    : props.books;
 
   return (
     <div>
