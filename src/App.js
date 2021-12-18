@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useLazyQuery, useApolloClient } from '@apollo/client';
+import { useLazyQuery, useApolloClient } from '@apollo/client';
 import { ME, ALL_BOOKS } from './queries';
 import Notify from './components/Notify';
 import Authors from './components/Authors';
@@ -14,7 +14,7 @@ const App = () => {
   const [token, setToken] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
   const [books, setBooks] = useState([]);
-  const meResult = useQuery(ME);
+  const [getMe, meResult] = useLazyQuery(ME);
   const [getBooks, allBooksResult] = useLazyQuery(ALL_BOOKS);
 
   const client = useApolloClient();
@@ -28,6 +28,7 @@ const App = () => {
 
   const handleLogoutBtnClick = () => {
     setToken(null);
+    setCurrentUser(null);
     localStorage.removeItem('library-user-token');
     client.resetStore();
     const authRequiredPages = ['add', 'recommend'];
@@ -37,9 +38,20 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (meResult.loading) {
-      return;
-    } else {
+    const token = localStorage.getItem('library-user-token');
+    if (token) {
+      setToken(token);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      getMe();
+    }
+  }, [token, getMe]);
+
+  useEffect(() => {
+    if (meResult.data) {
       setCurrentUser(meResult.data.me);
     }
   }, [meResult]);
@@ -55,6 +67,10 @@ const App = () => {
       setBooks(allBooksResult.data.allBooks);
     }
   }, [allBooksResult.data]);
+
+  if (meResult.loading) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div>
