@@ -98,12 +98,11 @@ const App = () => {
         books={books}
       />
       {page === 'add' && <NewBook notify={notify} />}
-      {page === 'recommend' && (
-        <Recommend
-          loading={allBooksResult.loading}
-          favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
-        />
-      )}
+      <Recommend
+        show={page === 'recommend'}
+        loading={allBooksResult.loading}
+        favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
+      />
       {page === 'login' && (
         <LoginForm notify={notify} setToken={setToken} setPage={setPage} />
       )}

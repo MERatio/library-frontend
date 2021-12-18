@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { ALL_BOOKS } from '../queries';
 
 const Recommend = (props) => {
 	const [books, setBooks] = useState([]);
-	const allBooksResult = useQuery(ALL_BOOKS, {
-		variables: { genre: props.favoriteGenre },
-	});
+	const [getBooks, allBooksResult] = useLazyQuery(ALL_BOOKS);
+
+	useEffect(() => {
+		if (props.show) {
+			getBooks({ variables: { genre: props.favoriteGenre } });
+		}
+	}, [getBooks, props.show, props.favoriteGenre]);
 
 	useEffect(() => {
 		if (allBooksResult.data) {
 			setBooks(allBooksResult.data.allBooks);
 		}
-	}, [allBooksResult]);
+	}, [allBooksResult.data]);
 
-	if (allBooksResult.loading) {
+	if (!props.show) {
+		return null;
+	} else if (allBooksResult.loading) {
 		return <div>loading...</div>;
 	}
 
