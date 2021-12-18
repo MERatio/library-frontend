@@ -72,31 +72,6 @@ const App = () => {
     return <div>loading...</div>;
   }
 
-  const getCurrentView = (page) => {
-    switch (page) {
-      case 'books':
-        return <Books loading={allBooksResult.loading} books={books} />;
-      case 'add':
-        return <NewBook notify={notify} />;
-      case 'recommend':
-        return (
-          <Recommend
-            loading={allBooksResult.loading}
-            favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
-          />
-        );
-      case 'login':
-        return (
-          <LoginForm notify={notify} setToken={setToken} setPage={setPage} />
-        );
-      case 'authors':
-      default:
-        return <Authors notify={notify} currentUser={currentUser} />;
-    }
-  };
-
-  let currentView = getCurrentView(page);
-
   return (
     <div>
       <Notify errorMessage={errorMessage} />
@@ -114,7 +89,24 @@ const App = () => {
         )}
         {currentUser && <button onClick={handleLogoutBtnClick}>logout</button>}
       </div>
-      {currentView}
+      {page === 'authors' && (
+        <Authors notify={notify} currentUser={currentUser} />
+      )}
+      <Books
+        show={page === 'books'}
+        loading={allBooksResult.loading}
+        books={books}
+      />
+      {page === 'add' && <NewBook notify={notify} />}
+      {page === 'recommend' && (
+        <Recommend
+          loading={allBooksResult.loading}
+          favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
+        />
+      )}
+      {page === 'login' && (
+        <LoginForm notify={notify} setToken={setToken} setPage={setPage} />
+      )}
     </div>
   );
 };

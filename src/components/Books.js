@@ -17,7 +17,9 @@ const Books = (props) => {
     ? props.books.filter((book) => book.genres.includes(genre))
     : props.books;
 
-  if (props.loading) {
+  if (!props.show) {
+    return null;
+  } else if (props.loading) {
     return <div>loading...</div>;
   }
 
