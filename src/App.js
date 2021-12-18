@@ -57,7 +57,7 @@ const App = () => {
   }, [meResult]);
 
   useEffect(() => {
-    if (['books', 'recommend'].includes(page)) {
+    if (['books'].includes(page)) {
       getBooks();
     }
   }, [page, getBooks]);
@@ -82,7 +82,6 @@ const App = () => {
         return (
           <Recommend
             loading={allBooksResult.loading}
-            books={books}
             favoriteGenre={currentUser ? currentUser.favoriteGenre : null}
           />
         );
