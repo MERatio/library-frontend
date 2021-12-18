@@ -4,6 +4,7 @@ import { ALL_BOOKS } from '../queries';
 
 const Books = (props) => {
   const [books, setBooks] = useState([]);
+  const [genre, setGenre] = useState(null);
   const [getBooks, allBooksResult] = useLazyQuery(ALL_BOOKS);
 
   useEffect(() => {
@@ -24,10 +25,28 @@ const Books = (props) => {
     return <div>loading...</div>;
   }
 
+  const getGenres = (books) => {
+    let genres = [];
+    books.forEach((book) => {
+      genres = [...genres, ...book.genres];
+    });
+    return [...new Set(genres)];
+  };
+
+  const genres = getGenres(books);
+
+  const booksToRender = genre
+    ? books.filter((book) => book.genres.includes(genre))
+    : books;
+
   return (
     <div>
       <h2>books</h2>
-
+      {genre && (
+        <div>
+          in genre <b>{genre}</b>
+        </div>
+      )}
       <table>
         <tbody>
           <tr>
@@ -35,7 +54,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((book) => (
+          {booksToRender.map((book) => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
@@ -44,6 +63,14 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      <div>
+        {genres.map((genre) => (
+          <button key={genre} onClick={() => setGenre(genre)}>
+            {genre}
+          </button>
+        ))}
+        <button onClick={() => setGenre(null)}>all genres</button>
+      </div>
     </div>
   );
 };
