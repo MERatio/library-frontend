@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLazyQuery, useApolloClient, useSubscription } from '@apollo/client';
-import { ME, ALL_BOOKS, BOOK_ADDED } from './queries';
+import { ME, ALL_BOOKS, ALL_AUTHORS, BOOK_ADDED } from './queries';
 import Notify from './components/Notify';
 import Authors from './components/Authors';
 import Books from './components/Books';
@@ -37,9 +37,42 @@ const App = () => {
     }
   };
 
+  const updateCacheWithBook = (book) => {
+    const booksDataInStore = client.readQuery({ query: ALL_BOOKS });
+    // booksDataInStore is null if user did not visit the books view
+    // therefore useLazyQuery will not be executed
+    if (booksDataInStore) {
+      const booksId = booksDataInStore.allBooks.map((book) => book.id);
+      if (!booksId.includes(book.id)) {
+        client.writeQuery({
+          query: ALL_BOOKS,
+          data: {
+            ...booksDataInStore,
+            allBooks: [...booksDataInStore.allBooks, book],
+          },
+        });
+      }
+    }
+    const authorsDataInStore = client.readQuery({ query: ALL_AUTHORS });
+    const authorsNames = authorsDataInStore.allAuthors.map(
+      (author) => author.name
+    );
+    if (!authorsNames.includes(book.author.name)) {
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          ...authorsDataInStore,
+          allAuthors: [...authorsDataInStore.allAuthors, book.author],
+        },
+      });
+    }
+  };
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      window.alert(`New book ${subscriptionData.data.bookAdded.title} added`);
+      const book = subscriptionData.data.bookAdded;
+      window.alert(`New book ${book.title} added`);
+      updateCacheWithBook(book);
     },
   });
 
@@ -103,7 +136,9 @@ const App = () => {
         loading={allBooksResult.loading}
         books={books}
       />
-      {page === 'add' && <NewBook notify={notify} />}
+      {page === 'add' && (
+        <NewBook notify={notify} updateCacheWithBook={updateCacheWithBook} />
+      )}
       <Recommend
         show={page === 'recommend'}
         loading={allBooksResult.loading}
