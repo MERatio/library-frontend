@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLazyQuery, useApolloClient } from '@apollo/client';
-import { ME, ALL_BOOKS } from './queries';
+import { useLazyQuery, useApolloClient, useSubscription } from '@apollo/client';
+import { ME, ALL_BOOKS, BOOK_ADDED } from './queries';
 import Notify from './components/Notify';
 import Authors from './components/Authors';
 import Books from './components/Books';
@@ -36,6 +36,12 @@ const App = () => {
       setPage('authors');
     }
   };
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(`New book ${subscriptionData.data.bookAdded.title} added`);
+    },
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token');
